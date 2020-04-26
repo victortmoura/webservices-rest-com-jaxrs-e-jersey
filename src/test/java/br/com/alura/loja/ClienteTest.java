@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import com.thoughtworks.xstream.XStream;
 
-import br.com.alura.loja.Servidor;
 import br.com.alura.loja.modelo.Carrinho;
 
 public class ClienteTest {
