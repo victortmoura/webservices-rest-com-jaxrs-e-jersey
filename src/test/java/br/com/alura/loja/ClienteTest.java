@@ -22,6 +22,7 @@ import br.com.alura.loja.modelo.Produto;
 public class ClienteTest {
 	
 	private HttpServer server;
+	private Client client;
 
 	@Before
 	public void startaServidor() {
@@ -36,7 +37,7 @@ public class ClienteTest {
 	@Test
 	public void testaQueBuscarUmCarrinhoTrazOCarrinhoEsperado() {
 //		cliente http para acessar o servidor
-		Client client = ClientBuilder.newClient();
+		client = ClientBuilder.newClient();
 		
 //		queremos usar uma URI base,a URI do servidor, para fazer várias requisições.
 		WebTarget target = client.target("http://localhost:8080");
@@ -60,7 +61,7 @@ public class ClienteTest {
 	@Test
 	public void testaCriacaoDeUmNovoCarrinho() {
 //		cliente http para acessar o servidor
-		Client client = ClientBuilder.newClient();
+		client = ClientBuilder.newClient();
 //		queremos usar uma URI base,a URI do servidor, para fazer várias requisições.
 		WebTarget target = client.target("http://localhost:8080");
 		
@@ -71,10 +72,13 @@ public class ClienteTest {
 		String xml = carrinho.toXML();
 		
 		Entity<String> entity = Entity.entity(xml, MediaType.APPLICATION_XML);
+		
 		Response response = target.path("/carrinhos").request().post(entity);
+		Assert.assertEquals(201, response.getStatus());
 		
-		Assert.assertEquals("<status>sucesso</status>", response.readEntity(String.class));
-		
+		String location = response.getHeaderString("Location"); 
+		String conteudo = client.target(location).request().get(String.class);
+		Assert.assertTrue(conteudo.contains("iPhone"));
 		
 	}
 	
