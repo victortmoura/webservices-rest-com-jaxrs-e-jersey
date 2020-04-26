@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.thoughtworks.xstream.XStream;
 
+import br.com.alura.loja.Servidor;
 import br.com.alura.loja.modelo.Carrinho;
 
 public class ClienteTest {
@@ -37,7 +38,7 @@ public class ClienteTest {
 		WebTarget target = client.target("http://localhost:8080");
 		
 // 		requisição para uma URI específica
-		String conteudo = target.path("/carrinhos").request().get(String.class);
+		String conteudo = target.path("/carrinhos/1").request().get(String.class);
 		
 		System.out.println(conteudo);
 			
