@@ -8,12 +8,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.filter.LoggingFilter;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sun.javafx.geom.AreaOp.CAGOp;
 import com.thoughtworks.xstream.XStream;
 
 import br.com.alura.loja.modelo.Carrinho;
@@ -22,11 +23,18 @@ import br.com.alura.loja.modelo.Produto;
 public class ClienteTest {
 	
 	private HttpServer server;
+	private WebTarget target;
 	private Client client;
 
 	@Before
 	public void startaServidor() {
 		this.server = Servidor.inicializaServidor();
+		ClientConfig config = new ClientConfig();
+		config.register(new LoggingFilter());
+//		cliente http para acessar o servidor
+		this.client = ClientBuilder.newClient(config);
+//		queremos usar uma URI base,a URI do servidor, para fazer várias requisições.
+		target = client.target("http://localhost:8080");
 	}
 	
 	@After
@@ -36,12 +44,6 @@ public class ClienteTest {
 	
 	@Test
 	public void testaQueBuscarUmCarrinhoTrazOCarrinhoEsperado() {
-//		cliente http para acessar o servidor
-		client = ClientBuilder.newClient();
-		
-//		queremos usar uma URI base,a URI do servidor, para fazer várias requisições.
-		WebTarget target = client.target("http://localhost:8080");
-		
 // 		requisição para uma URI específica
 		String conteudo = target.path("/carrinhos/1").request().get(String.class);
 		
@@ -60,10 +62,8 @@ public class ClienteTest {
 	
 	@Test
 	public void testaCriacaoDeUmNovoCarrinho() {
-//		cliente http para acessar o servidor
-		client = ClientBuilder.newClient();
 //		queremos usar uma URI base,a URI do servidor, para fazer várias requisições.
-		WebTarget target = client.target("http://localhost:8080");
+		target = client.target("http://localhost:8080");
 		
 		Carrinho carrinho = new Carrinho();
 		carrinho.adiciona(new Produto(314L, "iPhone", 999, 1));
